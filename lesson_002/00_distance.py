@@ -17,20 +17,12 @@ distances = {}
 
 def distance(x1, y1, x2, y2):
     dist = ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
-    return dist
-
-for i in sites:
-    for city in sites:
-        print(sites[i], sites[city])
-        # print(real)
-
-# for city in sites:
-#     print(sites[city])
+    return round(dist, 2)
 
 
+distances['Moscow_London'] = distance(*sites['Moscow'], *sites['London'])
+distances['Moscow_Paris'] = distance(*sites['Moscow'], *sites['Paris'])
+distances['Paris_London'] = distance(*sites['Paris'], *sites['London'])
 
-print(len(sites))
-
-
-
-# print(distances)
+for i in distances:
+    print(i, distances[i])

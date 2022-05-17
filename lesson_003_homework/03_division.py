@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 
 # (цикл while)
@@ -10,4 +11,11 @@
 
 a, b = 179, 37
 
-#
+i = a
+int_div = 0
+while i >= 0:
+    i -= b
+    if i > 0:
+        int_div += 1
+
+print('Целочисленное деление', a, 'на', b, 'дает', int_div)

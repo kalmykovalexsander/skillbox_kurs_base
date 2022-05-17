@@ -5,7 +5,7 @@
 #
 # Правила:
 # Компьютер загадывает четырехзначное число, все цифры которого различны
-# (первая цифра числа отлична от нуля). Игроку необходимо разгадать задуманное число.
+# (первая цифра числа отлична от нуля). Игроку необходимо nразгадать задуманное число.
 # Игрок вводит четырехзначное число c неповторяющимися цифрами,
 # компьютер сообщают о количестве «быков» и «коров» в названном числе
 # «бык» — цифра есть в записи задуманного числа и стоит в той же позиции,
@@ -43,4 +43,49 @@
 # Это пример применения SOLID принципа (см https://goo.gl/GFMoaI) в архитектуре программ.
 # Точнее, в этом случае важен принцип единственной ответственности - https://goo.gl/rYb3hT
 
-#
+from mastermind_engine import make_number, check_number, generate_number
+from termcolor import cprint
+
+result = {'bulls': 0, 'cows': 0}
+count = 0
+is_bot = False
+
+
+while True:
+
+    if count == 0:
+        cprint('***********************', 'magenta')
+        cprint('*** "Быки и Коровы" ***', 'magenta')
+        cprint('***********************', 'magenta')
+
+        is_bot = True if input('Доверите игру БОТУ? (y/n)') in ('Y', 'y', 'д', 'Д') else False
+        cprint('Число загадано', 'green')
+        cprint(make_number(), 'green')
+
+    if is_bot:
+        print('Укажите число: ')
+        user_number = generate_number()
+    else:
+        while True:
+            user_number = input('Укажите число: ')
+            if user_number.isdigit() and len(user_number) == 4:
+                break
+            else:
+                cprint('По условиям игры необходимо указать 4х значное число.', 'red')
+
+    print(user_number)
+
+    result = check_number(number=user_number)
+    cprint('быки - ' + str(result['bulls']) + ' коровы - ' + str(result['cows']), 'blue')
+    count += 1
+
+    if result['bulls'] == 4:
+        cprint('!!! ПОБЕДА !!!', 'red')
+        cprint('Кол-во попыток: ' + str(count), 'red')
+        result_ask = input('Хотите еще партию? (y/n)')
+
+        if result_ask in ('Y', 'y', 'д', 'Д'):
+            count = 0
+            continue
+        else:
+            break

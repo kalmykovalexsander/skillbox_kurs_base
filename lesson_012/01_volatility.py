@@ -62,15 +62,59 @@
 #
 # Подсказка: нужно последовательно открывать каждый файл, вычитывать данные, высчитывать волатильность и запоминать.
 # Вывод на консоль можно сделать только после обработки всех файлов.
-#
-# Для плавного перехода к мультипоточности, код оформить в обьектном стиле, используя следующий каркас
-#
-# class <Название класса>:
-#
-#     def __init__(self, <параметры>):
-#         <сохранение параметров>
-#
-#     def run(self):
-#         <обработка данных>
 
-#
+
+import csv
+import os
+from utils import time_track, print_report, get_next_file
+
+
+class TickerVolatility:
+
+    def __init__(self, file_path):
+
+        if os.path.exists(file_path):
+            self.file_path = file_path
+        else:
+            raise FileExistsError('Каталог с файлами отсутствует')
+
+    def get_tickers_info_from_file(self):
+
+        ticker = None
+        prices = []
+
+        with open(file=self.file_path, mode='r', encoding='utf8') as csv_file:
+            csv_dict = csv.DictReader(csv_file, delimiter=',')
+            for line in csv_dict:
+                ticker = line['SECID']
+                prices.append(float(line['PRICE']))
+
+        return ticker, prices
+
+    def run(self):
+
+        ticker, prices = self.get_tickers_info_from_file()
+
+        max_price, min_price = max(prices), min(prices)
+        average_price = (max_price + min_price) / 2
+        volatility = ((max_price - min_price) / average_price) * 100
+
+        return ticker, volatility
+
+
+@time_track
+def main(tickers_path):
+    tickers = {}
+
+    for file_name in get_next_file(tickers_path):
+        calc_volatility = TickerVolatility(file_path=file_name)
+        ticker, volatility = calc_volatility.run()
+        tickers[ticker] = volatility
+
+    print_report(tickers)
+
+
+if __name__ == '__main__':
+    TRADE_FILES = './trades'
+
+    main(tickers_path=TRADE_FILES)
